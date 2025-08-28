@@ -73,9 +73,7 @@ class TransaksiController extends Controller
             foreach ($request->detail as $item) {
                 $produk = $produkList[$item['produk_id']];
 
-                if ($produk->stok < $item['jumlah']) {
-                    throw new \Exception("Stok tidak cukup untuk produk: {$produk->nama}");
-                }
+                
 
                 $details[] = [
                     'transaksi_id' => $transaksi->id,
@@ -86,10 +84,7 @@ class TransaksiController extends Controller
                     'waktu_bayar'   => now(),
                 ];
 
-                // Kurangi stok
-                DB::table('produk')
-                    ->where('id', $item['produk_id'])
-                    ->decrement('stok', $item['jumlah']);
+                
             }
 
             DetailTransaksi::insert($details);
