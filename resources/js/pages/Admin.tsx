@@ -5,9 +5,6 @@ import { LogOut } from 'lucide-react';
 import Home from './view/home.js';
 import Produk from './view/produk.js';
 import type { PageProps } from '@/types/type';
-import VoucherDiskon from './view/voucher-diskon';
-import Member from './view/member';
-import VoucherUsage from './view/voucher-usage';
 import User from './view/user';
 import UserLogs from './view/user-logs';
 import TransaksiAdminPage from './view/transaksi-admin.js';
@@ -40,7 +37,7 @@ export default function Admin(){
         }
     })
     return (
-        <div className='w-full h-screen bg-gray-700 flex'>
+        <div className='w-full h-screen bg-gray-50 flex'>
             {/* Sidebar */}
             <div className={`${nav ? 'w-64' : 'w-0'} transition-all duration-300 ease-in-out bg-gray-800 overflow-hidden`}>
                 <div className={`p-4 ${nav ? 'block' : 'hidden'}`}>
@@ -59,13 +56,6 @@ export default function Admin(){
                             </svg>
                             Riwayat Transaksi
                         </a>
-                        <a onClick={()=>{setPage("member")}} className={`flex  ${page === "member"  && "bg-gray-700 text-white scale-105" }  items-center gap-1 hover:scale-105 text-gray-300 hover:text-white hover:bg-gray-700 rounded px-3 py-2 transition-all duration-300 ease-in-out`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                                <path fillRule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clipRule="evenodd" />
-                                <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
-                            </svg>
-                            Kelola Member
-                        </a>
                         <a onClick={()=>{setPage("produk")}}  className={`flex  ${page === "produk"  && "bg-gray-700 text-white scale-105" }  items-center gap-1 hover:scale-105 text-gray-300 hover:text-white hover:bg-gray-700 rounded px-3 py-2 transition-all duration-300 ease-in-out`}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
                                 <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
@@ -73,19 +63,6 @@ export default function Admin(){
                             </svg>
                             Products
                         </a>                        
-                        <a onClick={()=>{setPage("voucher-diskon")}} className={`flex  ${page === "voucher-diskon"  && "bg-gray-700 text-white scale-105" }  items-center gap-1 hover:scale-105 text-gray-300 hover:text-white hover:bg-gray-700 rounded px-3 py-2 transition-all duration-300 ease-in-out`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                                <path fillRule="evenodd" d="M1.5 6.375c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v3.026a.75.75 0 0 1-.375.65 2.249 2.249 0 0 0 0 3.898.75.75 0 0 1 .375.65v3.026c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 17.625v-3.026a.75.75 0 0 1 .374-.65 2.249 2.249 0 0 0 0-3.898.75.75 0 0 1-.374-.65V6.375Zm15-1.125a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0v.75a.75.75 0 0 0 1.5 0v-.75Zm-.75 3a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0v-.75a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0V18a.75.75 0 0 0 1.5 0v-.75ZM6 12a.75.75 0 0 1 .75-.75H12a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 12Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clipRule="evenodd" />
-                            </svg>
-                            Voucher Diskon
-                        </a>
-                        <a onClick={()=>{setPage("voucher-usage")}} className={`flex  ${page === "voucher-usage"  && "bg-gray-700 text-white scale-105" }  items-center gap-1 hover:scale-105 text-gray-300 hover:text-white hover:bg-gray-700 rounded px-3 py-2 transition-all duration-300 ease-in-out`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                                <path fillRule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z" clipRule="evenodd" />
-                                <path fillRule="evenodd" d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375Zm9.586 4.594a.75.75 0 0 0-1.172-.938l-2.476 3.096-.908-.907a.75.75 0 0 0-1.06 1.06l1.5 1.5a.75.75 0 0 0 1.116-.062l3-3.75Z" clipRule="evenodd" />
-                            </svg>
-                            Penggunaan Voucher
-                        </a>
                         <a onClick={()=>{setPage("user")}} className={`flex  ${page === "user"  && "bg-gray-700 text-white scale-105" }  items-center gap-1 hover:scale-105 text-gray-300 hover:text-white hover:bg-gray-700 rounded px-3 py-2 transition-all duration-300 ease-in-out`}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
                                 <path fillRule="evenodd" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" clipRule="evenodd" />
@@ -105,7 +82,7 @@ export default function Admin(){
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Header */}
-                <div className="w-full bg-gray-800 shadow-lg">
+                <div className="w-full bg-green-400 shadow-lg">
                     <div className="flex justify-between items-center px-4 py-3">
                         <div className='flex gap-3 items-center'>
                             <button 
@@ -119,7 +96,7 @@ export default function Admin(){
                                     }`} clipRule="evenodd" />
                                 </svg>
                             </button>
-                            <h2 className="text-2xl md:text-3xl text-white font-bold">Point of Sale</h2>
+                            <h2 className="text-2xl md:text-3xl text-white font-bold">Laundry POS</h2>
                         </div>
                         
                         <div className="flex justify-end items-center">
@@ -153,13 +130,10 @@ export default function Admin(){
                 
                 {/* Main Content Area */}
                 <div className="flex-1 overflow-auto w-full h-screen p-6">
-                    <div className="bg-white rounded-lg shadow-lg  px-6 py-6">
+                    <div className="bg-white border border-grey-200 rounded-lg shadow-xl  px-6 py-6">
                         { page === "home" && <Home users={users} members={members} produks={produks} pemasukan_bulan_ini={pemasukan_bulan_ini} transaksi={transaksi} />}
                         { page === "transaksi" && <TransaksiAdminPage transaksi={transaksi} />}
                         { page === "produk" && <Produk produks={produks} />}
-                        { page === "voucher-diskon" && <VoucherDiskon />}
-                        { page === "member" && <Member members={members} />}
-                        { page === "voucher-usage" && <VoucherUsage />}
                         { page === "user" && <User users={users} />}
                         { page === "user-logs" && <UserLogs />}
                     </div>

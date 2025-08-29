@@ -257,7 +257,7 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
       {/* Content */}
       <div className="flex-1 p-6">
         {/* Filter & Search */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-3 flex-1">
               <div className="relative flex-1 max-w-md">
@@ -272,17 +272,6 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                   className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
               </div>
-              
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              >
-                <option value="all">Semua Status</option>
-                <option value="paid">Paid</option>
-                <option value="pending">Pending</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
 
               {/* Print Button */}
               <button
@@ -337,7 +326,7 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Tanggal Dari (Opsional)
+                    Dari
                   </label>
                   <input
                     type="date"
@@ -349,7 +338,7 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Tanggal Sampai (Opsional)
+                    Sampai
                   </label>
                   <input
                     type="date"
@@ -388,22 +377,16 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                     Transaksi
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Member
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Total
+                    Produk
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Pembayaran
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Produk
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Waktu
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Total
                   </th>
                 </tr>
               </thead>
@@ -430,46 +413,6 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                         </div>
                       </div>
                     </td>
-                    
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold mr-3">
-                          {trx.member?.nama?.charAt(0) || 'G'}
-                        </div>
-                        <div>
-                          <div className="font-medium text-slate-900">
-                            {trx.member?.nama || 'Guest'}
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            {trx.member ? 'Member' : 'Non Member'}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    
-                    <td className="px-6 py-4">
-                      <div className="text-lg font-bold text-slate-900">
-                        {formatCurrency(trx.total)}
-                      </div>
-                    </td>
-                    
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="text-slate-500">
-                          {getPaymentMethodIcon(trx.metode_pembayaran)}
-                        </div>
-                        <span className="text-sm font-medium text-slate-700 capitalize">
-                          {trx.metode_pembayaran}
-                        </span>
-                      </div>
-                    </td>
-                    
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(trx.status)}`}>
-                        {trx.status}
-                      </span>
-                    </td>
-                    
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <div className="flex -space-x-2">
@@ -499,6 +442,18 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                     </td>
                     
                     <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="text-slate-500">
+                          {getPaymentMethodIcon(trx.metode_pembayaran)}
+                        </div>
+                        <span className="text-sm font-medium text-slate-700 capitalize">
+                          {trx.metode_pembayaran}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    
+                    <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         <div className="text-sm font-medium text-slate-900">
                           
@@ -507,6 +462,11 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                         <div className="text-xs text-slate-500">
                           {trx.status === "pending" ? trx.created_at && new Date(trx.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : trx.waktu_bayar && new Date(trx.waktu_bayar).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                         </div>                        
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-lg font-bold text-slate-900">
+                        {formatCurrency(trx.total)}
                       </div>
                     </td>
                   </tr>

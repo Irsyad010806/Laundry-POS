@@ -97,7 +97,7 @@ export default function Dashboard({ produk }: DashboardProps) {
 
         // Tampilkan loading dari SweetAlert
         Swal.fire({
-            title: 'Menyimpan transaksi...',
+            title: 'Memproses transaksi...',
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {
@@ -129,8 +129,8 @@ export default function Dashboard({ produk }: DashboardProps) {
             onSuccess: () => {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Transaksi Berhasil',
-                    text: 'Data berhasil disimpan.',
+                    title: 'Success',
+                    text: 'Transaksi Berhasil.',
                 });
                 setTransaksi([]);
 
@@ -456,9 +456,6 @@ export default function Dashboard({ produk }: DashboardProps) {
                     <h1 className="text-2xl font-bold text-white">Laundry POS</h1>
                 </div>
                 <div className={`flex gap-4 w-full justify-end`}>
-                    <button onClick={() => router.visit('/transaksi')} className="flex justify-center bg-white text-blue-400 rounded-sm items-center px-4 cursor-pointer hover:scale-105 transition-all duration-300">
-                        Riwayat&nbsp;Transaksi
-                    </button>
                     <div onClick={toggleLogout} className={`text-white flex items-center relative cursor-pointer`}>
                         {localStorage.getItem("username")}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={`size-4 ml-2 ${showLogout ? 'rotate-180' : ''} transition-transform duration-150 ease-in-out`}>
@@ -648,7 +645,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                                         Swal.fire({
                                             icon: 'warning',
                                             title: 'Oops!',
-                                            text: 'Tidak ada produk yang dipilih',
+                                            text: 'Silahkan pilih produk terlebih dahulu.',
                                             confirmButtonText: 'OK',
                                         });
                                         return;
@@ -657,7 +654,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                                     if (!selectedPayment) {
                                         Swal.fire({
                                             icon: 'warning',
-                                            title: 'Metode Pembayaran Belum Dipilih',
+                                            title: 'Opps!',
                                             text: 'Silahkan pilih metode pembayaran terlebih dahulu.',
                                             confirmButtonText: 'OK',
                                         });
@@ -873,7 +870,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Uang Tidak Cukup!',
-                                            text: 'Silakan masukkan jumlah yang sesuai atau centang sebagai hutang atau menggunakan saldo.',
+                                            text: 'Silakan masukkan nominal yang sesuai.',
                                         });
                                         return;
                                     }
@@ -912,39 +909,6 @@ export default function Dashboard({ produk }: DashboardProps) {
                                 <span className="sr-only">Close modal</span>
                             </button>
                         </div>
-                        {/* Modal Body */}
-                        {selectedMember ? (
-                            // Jika ada member (versi dengan diskon)
-                            <div className="p-4 border-b border-gray-200 max-h-48 overflow-y-auto text-black">
-                                <h4 className="font-semibold mb-2">Ringkasan Checkout</h4>
-                                <ul className="text-sm text-gray-700 space-y-1">
-                                    {transaksi.map((item, index) => (
-                                        <li key={index} className="flex justify-between">
-                                            <span>{item.qty}x {item.produk.nama}</span>
-                                            <span>Rp {(item.produk.harga * item.qty).toLocaleString('id-ID')}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="flex justify-between font-bold mt-3">
-                                    <span>Nama Member:</span>
-                                    <span>{selectedMember.nama}</span>
-                                </div>
-                                <div className="flex justify-between font-bold mt-2">
-                                    <span>Diskon Member:</span>
-                                    <span>{diskonPersen}%</span>
-                                </div>
-                                <div className="flex justify-between font-bold mt-2 text-red-600">
-                                    <span>Potongan:</span>
-                                    <span>- Rp {potongan.toLocaleString('id-ID')}</span>
-                                </div>
-                                <div className="flex justify-between font-bold mt-2 text-green-600">
-                                    <span>Total Akhir:</span>
-                                    <span>Rp {totalSetelahDiskon.toLocaleString('id-ID')}</span>
-                                </div>
-                            </div>
-                        ) : (
-                            // Jika bukan member
                             <div className="p-4 border-b border-gray-200 max-h-48 overflow-y-auto text-black">
                                 <h4 className="font-semibold mb-2">Ringkasan Checkout</h4>
                                 <ul className="text-sm text-gray-700 space-y-1">
@@ -960,7 +924,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                                     <span>Rp {transaksi.reduce((total, item) => total + item.produk.harga * item.qty, 0).toLocaleString('id-ID')}</span>
                                 </div>
                             </div>
-                        )}
+                        
 
                         {/* Form Pembayaran Non-Tunai */}
                         <div className="p-4 space-y-4">
@@ -978,139 +942,6 @@ export default function Dashboard({ produk }: DashboardProps) {
                             >
                                 Konfirmasi Pembayaran
                             </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {showModalTambahMember && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-                    <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
-                        {/* Modal Header */}
-                        <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                Tambah Member
-                            </h3>
-                            <button
-                                type="button"
-                                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 flex justify-center items-center"
-                                onClick={() => {
-                                    setShowModalTambahMember(false);
-                                }}
-                            >
-                                <svg className="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                                <span className="sr-only">Close modal</span>
-                            </button>
-                        </div>
-                        {/* Modal Body */}
-                        <div className={`p-4 space-y-4`}>
-                            <div className="flex flex-col">
-                                <label htmlFor="nama">Nama Member</label>
-                                <input
-                                    id="nama"
-                                    type="text"
-                                    value={member.nama}
-                                    onChange={(e) => setMember({ ...member, nama: e.target.value })}
-                                    className="focus:outline-0 border border-gray-300 bg-white rounded-sm p-2"
-                                />
-                            </div>
-
-                            <div className="flex flex-col">
-                                <label htmlFor="alamat">Alamat Member</label>
-                                <textarea
-                                    id="alamat"
-                                    value={member.alamat}
-                                    onChange={(e) => setMember({ ...member, alamat: e.target.value })}
-                                    className="focus:outline-0 border border-gray-300 bg-white rounded-sm p-2"
-                                />
-                            </div>
-
-                            <div className="flex flex-col">
-                                <label htmlFor="telepon">Nomor Telepon Member</label>
-                                <input
-                                    id="telepon"
-                                    type="text"
-                                    value={member.telepon}
-                                    onChange={(e) => setMember({ ...member, telepon: e.target.value })}
-                                    className="focus:outline-0 border border-gray-300 bg-white rounded-sm p-2"
-                                />
-                            </div>
-
-                        </div>
-                        <div className="p-4 space-y-4">
-                            <button onClick={handleTambahMember} className="w-full bg-blue-500 text-white py-2 rounded-md">
-                                Tambahkan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {showModalNabung && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-                    <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
-                        {/* Modal Header */}
-                        <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                            <h3 className="text-lg font-semibold text-black">
-                                Tabungan Member
-                            </h3>
-                            <button
-                                type="button"
-                                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 flex justify-center items-center"
-                                onClick={() => {
-                                    setShowModalNabung(false);
-                                }}
-                            >
-                                <svg className="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                                <span className="sr-only">Close modal</span>
-                            </button>
-                        </div>
-                        {/* Modal Body */}
-                        <div className={`p-4 space-y-4 text-black`}>
-                            <div className={`flex w-full h-10 justify-between relative rounded-full p-2 bg-gray-400`}>
-                                <div className={` w-1/2 h-2/3 top-1.5 z-0 ${statusNabung === "Deposit" ? '' :statusNabung === "Tarik" && 'translate-x-48'} bg-white rounded-full absolute transition-all duration-300 ease-in-out`}>&nbsp;</div>
-                                <div onClick={()=>{setStatusNabung("Deposit")}} className={`w-1/2 items-center flex justify-center z-10 transition-all font-bold ${statusNabung === "Deposit" ? 'text-black' :'text-white'}`}>Deposit</div>
-                                <div onClick={()=>{setStatusNabung("Tarik")}} className={`w-1/2 items-center flex justify-center z-10 transition-all font-bold ${statusNabung === "Tarik" ? 'text-black' :'text-white'}`}>Tarik</div>
-                            </div>
-                            {statusNabung === "Deposit" ? (<div className="flex flex-col">
-                                <label htmlFor="telepon" className="text-black">Deposit Member</label>
-                                <input
-                                    id="deposit"
-                                    type="number"
-                                    value={deposit}
-                                    onChange={(e) => setDeposit(e.target.value)}
-                                    className="focus:outline-0 border border-gray-300 bg-white rounded-sm p-2 text-black"
-                                />
-                            </div>): statusNabung === "Tarik" && (
-                            <div className="flex flex-col">
-                                <label htmlFor="telepon" className="text-black">Tarik Uang Member</label>
-                                <input
-                                    id="tarik"
-                                    type="number"
-                                    value={tarik}
-                                    onChange={(e) => setTarik(e.target.value)}
-                                    className="focus:outline-0 border border-gray-300 bg-white rounded-sm p-2 text-black"
-                                />
-                            </div>
-                            )}
-                        </div>
-                        <div className="p-4 space-y-4">
-                            <button
-                                onClick={() => handleTabunganMember(
-                                    selectedMember?.id,
-                                    parseInt(deposit || '0'),
-                                    parseInt(tarik || '0'),
-                                    'Setoran manual oleh kasir',
-                                    '-',
-                                    true
-                                )}
-                                className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold"
-                            >
-                                {statusNabung === "Deposit" ?'Depositkan uang' :'Tarik uang'}
-                            </button>
-
                         </div>
                     </div>
                 </div>
