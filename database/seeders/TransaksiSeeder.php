@@ -13,30 +13,30 @@ class TransaksiSeeder extends Seeder
             [
                 'id' => 1,
                 'user_id' => 2,
-                'member_id' => 1, // Budi Default
                 'kode_transaksi' => 'TRX001',
+                'nama_penerima' => 'Budi',
+                'alamat_pengiriman' => 'Jl. Mawar No. 1',
+                'biaya_pengiriman' => 5000.00,
                 'total' => 41000.00,
                 'metode_pembayaran' => 'tunai',
-                'qris_ref_id' => null,
-                'status' => 'paid',
+                'uang_tunai' => 50000.00,
                 'created_at' => '2025-07-11 07:41:40',
                 'waktu_bayar' => '2025-07-11 07:41:40',
             ],
             [
                 'id' => 2,
                 'user_id' => 2,
-                'member_id' => 2, // Ani Langganan
                 'kode_transaksi' => 'TRX002',
+                'nama_penerima' => 'Ani',
+                'alamat_pengiriman' => 'Jl. Melati No. 2',
+                'biaya_pengiriman' => 0.00,
                 'total' => 36000.00,
-                'metode_pembayaran' => 'qris',
-                'qris_ref_id' => 'QRIS123',
-                'status' => 'paid',
+                'metode_pembayaran' => 'non-tunai',
+                'uang_tunai' => null,
                 'created_at' => '2025-07-11 07:41:40',
                 'waktu_bayar' => '2025-07-11 07:41:40',
             ],
         ]);
     }
-
-
 }
 

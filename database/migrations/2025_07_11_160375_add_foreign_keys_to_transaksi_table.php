@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transaksi', function (Blueprint $table) {
-            $table->foreign(['user_id'], 'fk_transaksi_user')->references(['id'])->on('users')->onUpdate('restrict')->onDelete('cascade');
+            // Pastikan kolom user_id sudah bertipe unsignedBigInteger
+            $table->foreign('user_id', 'fk_transaksi_user')
+                ->references('id')->on('users')
+                ->onUpdate('restrict')->onDelete('cascade');
         });
     }
 

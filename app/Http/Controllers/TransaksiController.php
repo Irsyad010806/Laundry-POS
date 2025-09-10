@@ -29,62 +29,44 @@ class TransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_transaksi' => 'required|string|unique:transaksi,kode_transaksi',
+            'nama_penerima' => 'required|string',
+            'alamat_pengiriman' => 'nullable|string',
+            'biaya_pengiriman' => 'nullable|numeric',
             'total' => 'required|numeric',
-            'metode' => 'required|in:tunai,non-tunai,qris',
-            'status' => 'required|in:paid,pending',
-            'member_id' => 'nullable|exists:members,id',
-            'detail' => 'required|array|min:1',
-            'detail.*.produk_id' => 'required|exists:produk,id',
-            'detail.*.jumlah' => 'required|integer|min:1',
-            'detail.*.harga' => 'required|numeric|min:0',
-            'nama_member' => 'nullable|string',
+            'pembayaran' => 'required|in:tunai,non-tunai',
+            'uang_tunai' => 'nullable|numeric',
+            'transaksi' => 'required|array|min:1',
+            'transaksi.*.produk_id' => 'required|exists:produk,id',
+            'transaksi.*.qty' => 'required|integer|min:1',
+            'transaksi.*.harga' => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
 
         try {
-
-            $member = null;
-            if ($request->filled('nama_member')) {
-                $member = Member::where('nama', $request->nama_member)->first();
-
-                if (!$member) {
-                    return back()->withErrors(['nama_member' => 'Nama member tidak ditemukan.']);
-                }
-            }
             $transaksi = Transaksi::create([
-                'kode_transaksi'     => $request->kode_transaksi,
+                'kode_transaksi'     => 'TRX' . time(),
                 'total'              => $request->total,
                 'user_id'            => Auth::id(),
-                'member_id'          => $member?->id,
-                'diskon_id'          => $member?->diskon_id ?? null,
-                'metode_pembayaran'  => $request->metode,
-                'status'             => $request->status,
-                'created_at'        => $request->status === 'paid' || $request->status === 'pending'? now() : null,
-                'waktu_bayar'        => $request->status === 'paid' ? now() : null,
+                'metode_pembayaran'  => $request->pembayaran,
+                'nama_penerima'      => $request->nama_penerima,
+                'alamat_pengiriman'  => $request->alamat_pengiriman,
+                'biaya_pengiriman'   => $request->biaya_pengiriman,
+                'uang_tunai'         => $request->uang_tunai,
+                'created_at'         => now(),
+                'waktu_bayar'        => now(),
             ]);
 
-            $produkIds = collect($request->detail)->pluck('produk_id');
-            $produkList = Produk::whereIn('id', $produkIds)->get()->keyBy('id');
-
             $details = [];
-
-            foreach ($request->detail as $item) {
-                $produk = $produkList[$item['produk_id']];
-
-                
-
+            foreach ($request->transaksi as $item) {
                 $details[] = [
                     'transaksi_id' => $transaksi->id,
                     'produk_id'    => $item['produk_id'],
-                    'qty'          => $item['jumlah'],
+                    'qty'          => $item['qty'],
                     'harga'        => $item['harga'],
                     'created_at'   => now(),
-                    'waktu_bayar'   => now(),
+                    'waktu_bayar'  => now(),
                 ];
-
-                
             }
 
             DetailTransaksi::insert($details);

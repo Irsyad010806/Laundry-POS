@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('harga');
             $table->integer('stok')->default(0);
             $table->string('gambar');
+            $table->string('kategori', 50); // Tambahkan kolom kategori
             $table->timestamps();
         });
     }
@@ -29,3 +30,4 @@ return new class extends Migration
         Schema::dropIfExists('produk');
     }
 };
+

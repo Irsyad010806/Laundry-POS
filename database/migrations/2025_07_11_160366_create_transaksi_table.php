@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('transaksi', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index('fk_transaksi_user');
-            $table->foreignId('member_id')->nullable()->constrained('members')->onDelete('set null');
-            $table->foreignId('diskon_id')->nullable()->constrained('diskons')->onDelete('set null');
-            $table->string('kode_transaksi')->unique('kode_transaksi');
-            $table->decimal('total', 15);
-            $table->enum('metode_pembayaran', ['tunai', 'non-tunai', 'qris', 'lainnya']);
-            $table->string('qris_ref_id')->nullable();
-            $table->enum('status', ['pending', 'paid', 'failed', 'expired'])->default('pending');
+            $table->string('kode_transaksi')->unique();
+            $table->string('nama_penerima', 100);
+            $table->string('alamat_pengiriman', 255)->nullable();
+            $table->decimal('biaya_pengiriman', 12, 2)->nullable();
+            $table->decimal('total', 15, 2);
+            $table->string('metode_pembayaran', 20);
+            $table->decimal('uang_tunai', 12, 2)->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('waktu_bayar')->nullable();
         });

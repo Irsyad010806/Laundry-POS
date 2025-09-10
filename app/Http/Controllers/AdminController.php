@@ -26,9 +26,9 @@ class AdminController extends Controller
         // Hitung pemasukan 1 bulan terakhir (reset otomatis tiap bulan)
         $startOfMonth = now()->startOfMonth();
         $endOfMonth = now()->endOfMonth();
-        $pemasukanBulanIni = \App\Models\Transaksi::where('status', 'paid')
-            ->whereBetween('waktu_bayar', [$startOfMonth, $endOfMonth])
-            ->sum('total');
+        // $pemasukanBulanIni = \App\Models\Transaksi::where('status', 'paid')
+        //     ->whereBetween('waktu_bayar', [$startOfMonth, $endOfMonth])
+        //     ->sum('total');
 
         // Ambil riwayat transaksi (dengan relasi detail, produk, member)
         $transaksi = \App\Models\Transaksi::with([
@@ -40,7 +40,7 @@ class AdminController extends Controller
             'users' => $users,
             'members' => $members,
             'produks' => $produks,
-            'pemasukan_bulan_ini' => $pemasukanBulanIni,
+            // 'pemasukan_bulan_ini' => $pemasukanBulanIni,
             'transaksi' => $transaksi,
         ]);
     }

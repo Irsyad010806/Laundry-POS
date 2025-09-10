@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, router } from '@inertiajs/react';
 import Swal from 'sweetalert2';
 import QRCodePembayaran from '../components/qrcodepaymentmodal';
+import { LogOut } from "lucide-react";
 
 const kategoriList = [
                 { id: 'kiloan', nama: 'Cuci Kiloan', icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-6 h-6 mr-2">
@@ -118,30 +119,60 @@ export default function Dashboard({ produk }: DashboardProps) {
         setShowNonTunaiModal(false);
         setLoading(true);
 
-        setTimeout(() => {
-            setLoading(false);
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Transaksi Berhasil.',
-            });
-            setTransaksi([]);
-            setUangTunai('');
-            setUangTunaiDisplay('');
-            setNamaPenerima('');
-            setAlamatPengiriman('');
-            setIsAlamatAktif(false);
-        }, 100);
+        const dataToSend = {
+            nama_penerima: namaPenerima,
+            alamat_pengiriman: isAlamatAktif ? alamatPengiriman : null,
+            biaya_pengiriman: isAlamatAktif ? biayaPengiriman : 0,
+            total: totalAkhir,
+            pembayaran: selectedPayment, // 'tunai' atau 'non-tunai'
+            uang_tunai: uangTunai,
+            transaksi: transaksi.map(item => ({
+                produk_id: item.produk.id,
+                qty: item.qty,
+                harga: item.produk.harga,
+            })),
+        };
+
+        router.post('/transaksi', dataToSend, {
+            onSuccess: () => {
+                setLoading(false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Transaksi Berhasil.',
+                });
+                setTransaksi([]);
+                setUangTunai('');
+                setUangTunaiDisplay('');
+                setNamaPenerima('');
+                setAlamatPengiriman('');
+                setIsAlamatAktif(false);
+            },
+            onError: () => {
+                setLoading(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Gagal menyimpan transaksi!',
+                });
+            }
+        });
     };
 
     return (
         <div className="flex h-screen w-full bg-white flex-col gap-4">
             {/* Header */}
-            <div className="flex justify-between pt-4 px-4 bg-blue-400 py-4">
-                <div className="w-1/6 items-center flex">
-                    <h1 className="text-2xl font-bold text-white">Laundry POS</h1>
-                </div>
+            <div className="flex justify-between items-center pt-4 px-4 bg-blue-400 py-4">
+            <h1 className="text-2xl font-bold text-white">Laundry POS</h1>
+            <button
+                className="bg-red-500 flex items-center text-white px-4 py-2 rounded hover:bg-red-500 transition hover:scale-105 cursor-pointer"
+                onClick={() => router.post('/logout')}
+            >
+                <LogOut className="h-5 w-5 mr-1" />
+                Logout
+            </button>
             </div>
+
             <div className="flex h-full p-4 w-full">
                 {/* Katalog Produk */}
                 <div className="w-4/6 h-full bg-white rounded-lg p-4 border border-gray-200 shadow-lg">
@@ -160,7 +191,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                         {kategoriList.map((kat, idx) => (
                             <button
                                 key={kat.id}
-                                className={`border text-black py-2 flex items-center justify-center w-full
+                                className={`border text-black py-2 flex items-center justify-center w-full cursor-pointer
                                     ${kategoriAktif === kat.id ? 'bg-blue-400 text-white scale-105' : 'bg-white'}
                                     ${idx === 0 ? 'rounded-l-md' : ''}
                                     ${idx === kategoriList.length - 1 ? 'rounded-r-md' : ''}
@@ -181,7 +212,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                                     onClick={() => tambahTransaksi(item)}
                                     className="flex flex-col rounded-sm border hover:scale-105 hover:shadow-md hover:shadow-gray-500 transition-all duration-300 ease-in-out cursor-pointer border-gray-300 w-[120px] h-[140px]"
                                 >
-                                    <img src={`/logo/${item.gambar}`} alt={item.nama} className="object-cover w-full h-20 rounded-t-sm" />
+                                    <img src={`/images/${item.gambar}`} alt={item.nama} className="object-cover w-full h-20 rounded-t-sm" />
                                     <div className="p-2 rounded-b-sm">
                                         <p className="text-black text-sm font-semibold truncate">{item.nama}</p>
                                         <p className="text-green-500 text-xs">Rp. {item.harga.toLocaleString('id-ID')}</p>
@@ -334,7 +365,7 @@ export default function Dashboard({ produk }: DashboardProps) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
                     <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
                         <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-900">PEMBAYARAN Tunai</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">Pembayaran Tunai</h3>
                             <button
                                 type="button"
                                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 flex justify-center items-center"
@@ -349,13 +380,13 @@ export default function Dashboard({ produk }: DashboardProps) {
                         <div className="p-4 border-b border-gray-200 max-h-96 overflow-y-auto text-black">
                             {/* Input Nama & Alamat */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Nama Penerima</label>
+                                <label className="block text-gray-700 font-medium mb-1">Nama Pelanggan</label>
                                 <input
                                     type="text"
                                     className="border border-gray-300 rounded px-2 py-1 w-full text-black"
                                     value={namaPenerima}
                                     onChange={e => setNamaPenerima(e.target.value)}
-                                    placeholder="Masukkan nama penerima"
+                                    placeholder="Masukkan nama pelanggan"
                                 />
                                 <div className="flex items-center space-x-2 mt-2">
                                     <input
@@ -363,25 +394,20 @@ export default function Dashboard({ produk }: DashboardProps) {
                                         id="alamat-aktif"
                                         checked={isAlamatAktif}
                                         onChange={e => setIsAlamatAktif(e.target.checked)}
-                                        className="w-4 h-4 text-blue-500 border-gray-300 rounded"
+                                        className="w-4 h-4 text-blue-500 border-gray-300 rounded cursor-pointer"
                                     />
-                                    <label htmlFor="alamat-aktif" className="text-sm text-gray-700">
-                                        Kirim ke alamat lain?
+                                    <label htmlFor="alamat-aktif" className="text-sm text-gray-700 cursor-pointer">
+                                        Antar ke rumah?
                                     </label>
                                 </div>
                                 {isAlamatAktif && (
                                     <div className="space-y-2 mt-2">
-                                        <input
-                                            type="text"
+                                        <textarea
                                             className="border border-gray-300 rounded px-2 py-1 w-full text-black"
                                             value={alamatPengiriman}
                                             onChange={e => setAlamatPengiriman(e.target.value)}
                                             placeholder="Masukkan alamat pengiriman"
                                         />
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-700 font-medium">Biaya Pengiriman</span>
-                                            <span className="text-black font-semibold">Rp. {biayaPengiriman.toLocaleString('id-ID')}</span>
-                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -391,13 +417,19 @@ export default function Dashboard({ produk }: DashboardProps) {
                                 {transaksi.map((item, index) => (
                                     <li key={index} className="flex justify-between">
                                         <span>{item.qty}x {item.produk.nama}</span>
-                                        <span>Rp {(item.produk.harga * item.qty).toLocaleString('id-ID')}</span>
+                                        <span>Rp. {(item.produk.harga * item.qty).toLocaleString('id-ID')}</span>
                                     </li>
                                 ))}
+                                {isAlamatAktif && (
+                                    <li className="flex justify-between">
+                                            <span className="text-gray-700 font-medium">Biaya Pengiriman</span>
+                                            <span className="text-black">Rp. {biayaPengiriman.toLocaleString('id-ID')}</span>
+                                    </li>
+                                )}
                             </ul>
                             <div className="flex justify-between font-bold mt-2 text-black">
                                 <span>Total:</span>
-                                <span>Rp {totalAkhir.toLocaleString('id-ID')}</span>
+                                <span>Rp. {totalAkhir.toLocaleString('id-ID')}</span>
                             </div>
                         </div>
                         {/* Pembayaran */}
@@ -440,13 +472,13 @@ export default function Dashboard({ produk }: DashboardProps) {
                                 </div>
                             )}
                             <button
-                                className="w-full bg-green-500 text-white py-2 rounded-md"
+                                className="w-full bg-green-500 text-white py-2 rounded-md cursor-pointer hover:bg-green-600 hover:scale-105 transition-all duration-300"
                                 onClick={() => {
                                     if (namaPenerima.trim() === '') {
                                         Swal.fire({
                                             icon: 'warning',
                                             title: 'Oops!',
-                                            text: 'Silakan masukkan nama penerima!',
+                                            text: 'Silakan masukkan nama pelanggan!',
                                         });
                                         return;
                                     }
@@ -470,9 +502,9 @@ export default function Dashboard({ produk }: DashboardProps) {
             {/* Modal Non-Tunai */}
             {showNonTunaiModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-                    <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+                    <div className="bg-white rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-900">PEMBAYARAN Non Tunai</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">Pembayaran Non Tunai</h3>
                             <button
                                 type="button"
                                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 flex justify-center items-center"
@@ -484,16 +516,16 @@ export default function Dashboard({ produk }: DashboardProps) {
                                 <span className="sr-only">Close modal</span>
                             </button>
                         </div>
-                        <div className="p-4 border-b border-gray-200 max-h-96 overflow-y-auto text-black">
+                        <div className="p-4 border-b border-gray-200 text-black">
                             {/* Input Nama & Alamat */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Nama Penerima</label>
+                                <label className="block text-gray-700 font-medium mb-1">Nama Pelanggan</label>
                                 <input
                                     type="text"
                                     className="border border-gray-300 rounded px-2 py-1 w-full text-black"
                                     value={namaPenerima}
                                     onChange={e => setNamaPenerima(e.target.value)}
-                                    placeholder="Masukkan nama penerima"
+                                    placeholder="Masukkan nama pelanggan"
                                 />
                                 <div className="flex items-center space-x-2 mt-2">
                                     <input
@@ -501,25 +533,20 @@ export default function Dashboard({ produk }: DashboardProps) {
                                         id="alamat-aktif-nontunai"
                                         checked={isAlamatAktif}
                                         onChange={e => setIsAlamatAktif(e.target.checked)}
-                                        className="w-4 h-4 text-blue-500 border-gray-300 rounded"
+                                        className="w-4 h-4 text-blue-500 border-gray-300 rounded cursor-pointer"
                                     />
-                                    <label htmlFor="alamat-aktif-nontunai" className="text-sm text-gray-700">
-                                        Kirim ke alamat lain?
+                                    <label htmlFor="alamat-aktif-nontunai" className="text-sm text-gray-700 cursor-pointer">
+                                        Antar ke rumah?
                                     </label>
                                 </div>
                                 {isAlamatAktif && (
                                     <div className="space-y-2 mt-2">
-                                        <input
-                                            type="text"
+                                        <textarea
                                             className="border border-gray-300 rounded px-2 py-1 w-full text-black"
                                             value={alamatPengiriman}
                                             onChange={e => setAlamatPengiriman(e.target.value)}
                                             placeholder="Masukkan alamat pengiriman"
                                         />
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-700 font-medium">Biaya Pengiriman</span>
-                                            <span className="text-black font-semibold">Rp. {biayaPengiriman.toLocaleString('id-ID')}</span>
-                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -529,9 +556,15 @@ export default function Dashboard({ produk }: DashboardProps) {
                                 {transaksi.map((item, index) => (
                                     <li key={index} className="flex justify-between">
                                         <span>{item.qty}x {item.produk.nama}</span>
-                                        <span>Rp {(item.produk.harga * item.qty).toLocaleString('id-ID')}</span>
+                                        <span>Rp. {(item.produk.harga * item.qty).toLocaleString('id-ID')}</span>
                                     </li>
                                 ))}
+                                {isAlamatAktif && (
+                                    <li className="flex justify-between">
+                                            <span className="text-gray-700 font-medium">Biaya Pengiriman</span>
+                                            <span className="text-black">Rp. {biayaPengiriman.toLocaleString('id-ID')}</span>
+                                    </li>
+                                )}
                             </ul>
                             <div className="flex justify-between font-bold mt-2 text-black">
                                 <span>Total:</span>
@@ -544,13 +577,13 @@ export default function Dashboard({ produk }: DashboardProps) {
                                 <QRCodePembayaran value="https://simulasi.pembayaran/12345" />
                             </div>
                             <button
-                                className="w-full bg-green-500 text-white py-2 rounded-md"
+                                className="w-full bg-green-500 text-white py-2 rounded-md cursor-pointer hover:bg-green-600 hover:scale-105 transition-all duration-300"
                                 onClick={() =>{
                                     if (namaPenerima.trim() === '') {
                                         Swal.fire({
                                             icon: 'warning',
                                             title: 'Oops!',
-                                            text: 'Silakan masukkan nama penerima!',
+                                            text: 'Silakan masukkan nama pelanggan!',
                                         });
                                         return;
                                     }
