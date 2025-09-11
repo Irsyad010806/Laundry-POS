@@ -31,9 +31,9 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'Kasir POS App') }}</title>
+        <title inertia>{{ config('app.name', 'Laundry POS') }}</title>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/Laundry-removebg-preview.png" sizes="any">
         <!-- <link rel="icon" href="/favicon.svg" type="image/svg+xml"> -->
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 

@@ -21,6 +21,7 @@ export default function Login({ status, users }: LoginProps) {
   const { data, setData, post, errors, reset } = useForm({
     nama_user: '',
     kode_user: '',
+    tipe_user: '',
   });
 
   useEffect(() => {
@@ -37,10 +38,12 @@ export default function Login({ status, users }: LoginProps) {
   const handleLoginClick = (nama_user: string, tipe_user: string) => {
     setActiveUser(nama_user);
     setActiveTipeUser(tipe_user);
-    setData('nama_user', nama_user); // ✅ wajib set nama_user di useForm
     localStorage.setItem("username", nama_user);
     localStorage.setItem("tipe_user", tipe_user);
+    errors.kode_user = ''; // hapus error kode_user
+    tipe_user === 'admin' ? setData('nama_user', '') : setData('nama_user', nama_user); // isi nama_user jika tipe_user admin
     setData('kode_user', ''); // kosongkan input kode
+    setData('tipe_user', tipe_user); // set tipe_user
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,11 +82,11 @@ export default function Login({ status, users }: LoginProps) {
                 <div className="flex flex-col items-center text-center">
                   <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-green-500 
         flex items-center justify-center text-3xl font-bold text-white mb-4 shadow-lg">
-                    {user.nama_user.charAt(0).toUpperCase()}
+                    {user.tipe_user.charAt(0).toUpperCase()}
                   </div>
 
-                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-1">
-                    {user.nama_user}
+                  <h3 className="text-xl capitalize font-semibold text-zinc-900 dark:text-white mb-1">
+                    {user.tipe_user}
                   </h3>
 
                   <span
@@ -102,16 +105,30 @@ export default function Login({ status, users }: LoginProps) {
                       onSubmit={handleSubmit}
                       className="flex flex-col gap-3 animate-fade-in"
                     >
+                      {user.tipe_user === 'admin' && (
+                        <div className="relative">
+                        <input
+                          type='text'
+                          placeholder="Masukkan Nama User"
+                          value={data.nama_user}
+                          onChange={(e) => setData('nama_user', e.target.value)}
+                          className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-600 
+                bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white 
+                shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          autoFocus
+                          required
+                        />
+                      </div>
+                      )}
                       <div className="relative">
                         <input
                           type={showKode ? 'text' : 'password'}
-                          placeholder="Masukkan Kode User"
+                          placeholder="Masukkan Password"
                           value={data.kode_user}
                           onChange={(e) => setData('kode_user', e.target.value)}
                           className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-600 
                 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white 
                 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          autoFocus
                           required
                         />
                         <button
@@ -126,12 +143,12 @@ export default function Login({ status, users }: LoginProps) {
 
                       {errors.kode_user && (
                         <div className="text-sm text-red-600 bg-red-100 border border-red-300 rounded px-3 py-2">
-                          ⚠ {errors.kode_user}
+                          ⚠ {user.tipe_user === 'admin' ? errors.kode_user : 'Kode user salah.'}
                         </div>
                       )}
 
                       <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md">
-                        Masuk
+                        Login
                       </Button>
 
                       <button
@@ -143,7 +160,7 @@ export default function Login({ status, users }: LoginProps) {
                         }}
                         className="text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-white mt-1"
                       >
-                        Batal
+                        Cancel
                       </button>
                     </form>
                   ) : (
@@ -153,7 +170,7 @@ export default function Login({ status, users }: LoginProps) {
             rounded-lg shadow-md"
                       onClick={() => handleLoginClick(user.nama_user, user.tipe_user)}
                     >
-                      Login
+                      Continue
                     </Button>
                   )}
                 </div>

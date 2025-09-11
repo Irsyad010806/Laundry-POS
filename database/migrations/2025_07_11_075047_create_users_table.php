@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('kode_user')->unique('kode_user');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
-            $table->enum('status', ['active', 'non-active'])->default('active');
         });
     }
 

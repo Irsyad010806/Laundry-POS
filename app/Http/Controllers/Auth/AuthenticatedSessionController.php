@@ -35,15 +35,16 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'nama_user' => 'required|string',
             'kode_user' => 'required|string',
+            'tipe_user' => 'required|in:admin,kasir',
         ]);
 
-        $user = \App\Models\User::where('kode_user', $request->kode_user)->first();
+        $user = \App\Models\User::where('tipe_user', $request->tipe_user)->where('nama_user', $request->nama_user)
+            ->where('kode_user', $request->kode_user)
+            ->first();
         if (!$user) {
-            return back()->withErrors(['kode_user' => 'Kode user salah.']);
-        }
-        if ($user->status === 'non-active') {
-            return back()->withErrors(['kode_user' => 'Akun nonaktif, hubungi admin.']);
+            return back()->withErrors(['kode_user' => 'Password salah atau user salah'])->withInput();
         }
 
         Auth::login($user);
