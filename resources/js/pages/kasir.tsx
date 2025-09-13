@@ -48,9 +48,10 @@ export default function Dashboard({ produk }: DashboardProps) {
 
     // Pengiriman
     const [namaPenerima, setNamaPenerima] = useState('');
+    const [noWhatsApp, setNoWhatsApp] = useState('');
     const [isAlamatAktif, setIsAlamatAktif] = useState(false);
     const [alamatPengiriman, setAlamatPengiriman] = useState('');
-    const [biayaPengiriman, setBiayaPengiriman] = useState(5000);
+    const [biayaPengiriman, setBiayaPengiriman] = useState(10000);
 
     // Perhitungan total
     const totalSebelumDiskon = transaksi.reduce(
@@ -121,10 +122,11 @@ export default function Dashboard({ produk }: DashboardProps) {
 
         const dataToSend = {
             nama_penerima: namaPenerima,
+            no_wa: noWhatsApp,
             alamat_pengiriman: isAlamatAktif ? alamatPengiriman : null,
             biaya_pengiriman: isAlamatAktif ? biayaPengiriman : 0,
             total: totalAkhir,
-            pembayaran: selectedPayment, // 'tunai' atau 'non-tunai'
+            pembayaran: selectedPayment,
             uang_tunai: uangTunai,
             transaksi: transaksi.map(item => ({
                 produk_id: item.produk.id,
@@ -134,29 +136,33 @@ export default function Dashboard({ produk }: DashboardProps) {
         };
 
         router.post('/transaksi', dataToSend, {
-            onSuccess: () => {
-                setLoading(false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Transaksi Berhasil.',
-                });
-                setTransaksi([]);
-                setUangTunai('');
-                setUangTunaiDisplay('');
-                setNamaPenerima('');
-                setAlamatPengiriman('');
-                setIsAlamatAktif(false);
-            },
-            onError: () => {
-                setLoading(false);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: 'Gagal menyimpan transaksi!',
-                });
-            }
+    onSuccess: () => {
+        setLoading(false);
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Transaksi Berhasil.',
         });
+        setTransaksi([]);
+        setUangTunai('');
+        setUangTunaiDisplay('');
+        setNamaPenerima('');
+        setNoWhatsApp('');
+        setAlamatPengiriman('');
+        setIsAlamatAktif(false);
+    },
+    onError: (errors) => {
+        setLoading(false);
+
+        // Tampilkan semua error dari server
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            html: Object.values(errors).join('<br>'),
+        });
+    }
+});
+
     };
 
     return (
@@ -388,6 +394,14 @@ export default function Dashboard({ produk }: DashboardProps) {
                                     onChange={e => setNamaPenerima(e.target.value)}
                                     placeholder="Masukkan nama pelanggan"
                                 />
+                                <label className="block text-gray-700 font-medium mb-1">No WhatsApp</label>
+                                <input
+                                    type="text"
+                                    className="border border-gray-300 rounded px-2 py-1 w-full text-black"
+                                    value={noWhatsApp}
+                                    onChange={e => setNoWhatsApp(e.target.value)}
+                                    placeholder="Masukkan No WhatsApp"
+                                />
                                 <div className="flex items-center space-x-2 mt-2">
                                     <input
                                         type="checkbox"
@@ -526,6 +540,14 @@ export default function Dashboard({ produk }: DashboardProps) {
                                     value={namaPenerima}
                                     onChange={e => setNamaPenerima(e.target.value)}
                                     placeholder="Masukkan nama pelanggan"
+                                />
+                                <label className="block text-gray-700 font-medium mb-1">No WhatsApp</label>
+                                <input
+                                    type="text"
+                                    className="border border-gray-300 rounded px-2 py-1 w-full text-black"
+                                    value={noWhatsApp}
+                                    onChange={e => setNoWhatsApp(e.target.value)}
+                                    placeholder="Masukkan No WhatsApp"
                                 />
                                 <div className="flex items-center space-x-2 mt-2">
                                     <input

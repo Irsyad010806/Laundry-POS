@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->index('fk_transaksi_user');
             $table->string('kode_transaksi')->unique();
             $table->string('nama_penerima', 100);
+            $table->string('no_wa', 15)->nullable();
             $table->string('alamat_pengiriman', 255)->nullable();
             $table->decimal('biaya_pengiriman', 12, 2)->nullable();
             $table->decimal('total', 15, 2);

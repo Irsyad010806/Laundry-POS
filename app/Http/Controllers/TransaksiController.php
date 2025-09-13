@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Member;
-
+date_default_timezone_set('Asia/Jakarta');
 
 
 class TransaksiController extends Controller
@@ -30,6 +30,7 @@ class TransaksiController extends Controller
     {
         $request->validate([
             'nama_penerima' => 'required|string',
+            'no_wa' => 'nullable|integer',
             'alamat_pengiriman' => 'nullable|string',
             'biaya_pengiriman' => 'nullable|numeric',
             'total' => 'required|numeric',
@@ -45,11 +46,12 @@ class TransaksiController extends Controller
 
         try {
             $transaksi = Transaksi::create([
-                'kode_transaksi'     => 'TRX' . time(),
+                'kode_transaksi'     => 'INV' . date('YmdHis'),
                 'total'              => $request->total,
                 'user_id'            => Auth::id(),
                 'metode_pembayaran'  => $request->pembayaran,
                 'nama_penerima'      => $request->nama_penerima,
+                'no_wa'              => $request->no_wa,
                 'alamat_pengiriman'  => $request->alamat_pengiriman,
                 'biaya_pengiriman'   => $request->biaya_pengiriman,
                 'uang_tunai'         => $request->uang_tunai,
