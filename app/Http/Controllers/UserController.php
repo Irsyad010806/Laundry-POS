@@ -23,10 +23,7 @@ class UserController extends Controller
             'nama_user' => 'required|string',
             'tipe_user' => 'required|in:admin,kasir',
             'kode_user' => 'required|string|unique:users,kode_user,' . $id,
-            'status' => 'required|in:active,non-active',
         ]);
-        $user->update($data);
-        return redirect()->back()->with('status', 'User updated successfully');
     }
 
     public function destroy($id)
@@ -42,7 +39,6 @@ class UserController extends Controller
             'nama_user' => 'required|string',
             'tipe_user' => 'required|in:admin,kasir',
             'kode_user' => 'required|string|unique:users,kode_user',
-            'status' => 'required|in:active,non-active',
         ]);
         User::create($data);
         return redirect()->back()->with('status', 'User created successfully');

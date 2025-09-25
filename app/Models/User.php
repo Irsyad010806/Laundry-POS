@@ -21,7 +21,6 @@ class User extends Authenticatable
         'nama_user',
         'tipe_user',
         'kode_user',
-        'status',
     ];
 
     /**

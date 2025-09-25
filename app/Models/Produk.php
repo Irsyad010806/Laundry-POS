@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class Produk extends Model
 {
     protected $table = 'produk'; // override karena default-nya 'produks'
-    protected $fillable = ['nama', 'harga', 'gambar'];
+    protected $fillable = ['nama', 'harga', 'kategori', 'gambar'];
 }

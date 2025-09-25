@@ -7,7 +7,7 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editData, setEditData] = useState<ProdukType | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [addData, setAddData] = useState({ nama: '', harga: '', stok: '', gambar: null as File | null });
+  const [addData, setAddData] = useState({ nama: '', harga: '', kategori: '', gambar: null as File | null });
 
 
   const openEditModal = (produk: ProdukType) => {
@@ -15,8 +15,8 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
       id: produk.id,
       nama: produk.nama ?? '',
       harga: Number(produk.harga) ?? 0,
-      stok: Number(produk.stok) ?? 0,
       gambar: produk.gambar ?? '',
+      kategori: produk.kategori ?? '',
       created_at: produk.created_at ?? null,
       updated_at: produk.updated_at ?? null,
     });
@@ -56,7 +56,7 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
     <div className="p-6 max-w-full mx-auto bg-gray-100 rounded-xl shadow text-black">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Data produk</h2>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={() => setShowAddModal(true)}>Tambah produk</button>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer" onClick={() => setShowAddModal(true)}>Tambah produk</button>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm text-left">
@@ -64,8 +64,8 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
             <tr className="border-b border-gray-200">
               <th className="py-3 px-6">Nama</th>
               <th className="py-3 px-6">Harga</th>
-              <th className="py-3 px-6">Stok</th>
               <th className="py-3 px-6">Gambar</th>
+              <th className="py-3 px-6">Kategori</th>
               <th className="py-3 px-6 text-center">Aksi</th>
             </tr>
           </thead>
@@ -74,20 +74,20 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
               <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
                 <td className="py-3 px-6">{item.nama}</td>
                 <td className="py-3 px-6">{item.harga}</td>
-                <td className="py-3 px-6">{item.stok}</td>
                 <td className="py-3 px-6">
-                  <img src={`/logo/${item.gambar}`} alt={item.nama} className="w-16 h-16 object-cover" />
+                  <img src={`/images/${item.gambar}`} alt={item.nama} className="w-16 h-16 object-cover" />
                 </td>
+                <td className="py-3 px-6 capitalize">{item.kategori}</td>
                 <td className="py-3 px-6 flex justify-center">
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="bg-red-500 text-white w-16 mr-4 py-2 rounded-md"
+                    className="bg-red-500 text-white w-16 mr-4 py-2 rounded-md cursor-pointer"
                   >
                     Hapus
                   </button>
                   <button
                     onClick={() => openEditModal(item)}
-                    className="bg-yellow-500 text-white w-16 py-2 rounded-md"
+                    className="bg-yellow-500 text-white w-16 py-2 rounded-md cursor-pointer"
                   >
                     Edit
                   </button>
@@ -109,10 +109,10 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
                   const formData = new FormData();
                   formData.append("nama", editData.nama);
                   formData.append("harga", editData.harga.toString());
-                  formData.append("stok", editData.stok.toString());
                   if (editData.gambar && editData.gambar instanceof File) {
                     formData.append("gambar", editData.gambar);
                   }
+                  formData.append("kategori", editData.kategori.toString());
                   formData.append('_method', 'PUT');
 
                   router.post(`/produk/${editData.id}`, formData, {
@@ -143,14 +143,6 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
                   className="w-full border p-2 mb-2 border border-gray-400 rounded"
                   placeholder="Harga"
                 />
-                <h1>Stok</h1>
-                <input
-                  type="number"
-                  value={editData?.stok ?? 0}
-                  onChange={(e) => setEditData({ ...editData, stok: Number(e.target.value) })}
-                  className="w-full border p-2 mb-2 border border-gray-400 rounded"
-                  placeholder="Stok"
-                />
                 <h1>Gambar</h1>
                 <input
                   type="file"
@@ -160,11 +152,19 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
                   }
                   className="w-full border p-2 mb-4 border border-gray-400 rounded"
                 />
+                  <h1>Kategori</h1>
+                  <input
+                    type="text"
+                    value={editData?.kategori}
+                    onChange={(e) => setEditData({ ...editData, kategori: String(e.target.value) })}
+                    className="w-full border p-2 mb-2 border border-gray-400 rounded"
+                    placeholder="Kategori"
+                  />
                 <div className="flex justify-end gap-2">
-                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-500 text-white rounded">
+                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-500 text-white rounded cursor-pointer">
                     Batal
                   </button>
-                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
                     Simpan
                   </button>
                 </div>
@@ -183,13 +183,13 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
                 const formData = new FormData();
                 formData.append('nama', addData.nama);
                 formData.append('harga', addData.harga);
-                formData.append('stok', addData.stok);
                 if (addData.gambar) formData.append('gambar', addData.gambar);
+                formData.append('kategori', addData.kategori);
                 router.post('/produk', formData, {
                   forceFormData: true,
                   onSuccess: () => {
                     setShowAddModal(false);
-                    setAddData({ nama: '', harga: '', stok: '', gambar: null });
+                    setAddData({ nama: '', harga: '', kategori: '', gambar: null });
                     Swal.fire('Berhasil', 'Produk berhasil ditambahkan', 'success');
                   },
                   onError: () => {
@@ -216,15 +216,6 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
                 placeholder="Harga"
                 required
               />
-              <h1>Stok</h1>
-              <input
-                type="number"
-                value={addData.stok}
-                onChange={e => setAddData({ ...addData, stok: e.target.value })}
-                className="w-full border p-2 mb-2 border border-gray-400 rounded"
-                placeholder="Stok"
-                required
-              />
               <h1>Gambar</h1>
               <input
                 type="file"
@@ -232,11 +223,20 @@ export default function Produk({ produks }: { produks: ProdukType[] }) {
                 onChange={e => setAddData({ ...addData, gambar: e.target.files?.[0] || null })}
                 className="w-full border p-2 mb-4 border border-gray-400 rounded"
               />
+              <h1>Kategori</h1>
+              <input
+                type="text"
+                value={addData.kategori}
+                onChange={e => setAddData({ ...addData, kategori: e.target.value })}
+                className="w-full border p-2 mb-2 border border-gray-400 rounded"
+                placeholder="Kategori"
+                required
+              />
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 bg-gray-500 text-white rounded">
+                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 bg-gray-500 text-white rounded cursor-pointer">
                   Batal
                 </button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
                   Tambah
                 </button>
               </div>

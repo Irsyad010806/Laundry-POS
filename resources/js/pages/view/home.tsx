@@ -25,7 +25,7 @@ export default function Home({ users, members, produks, pemasukan_bulan_ini, tra
         </div>
         <div className="bg-yellow-500 text-white p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Transaksi</h3>
-          <p className="text-3xl font-bold">{members.length}</p>
+          <p className="text-3xl font-bold">{transaksi.length}</p>
         </div>
         <div className="bg-blue-500 text-white p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total User</h3>
@@ -43,7 +43,6 @@ export default function Home({ users, members, produks, pemasukan_bulan_ini, tra
                 <th className="py-3 px-6">Kode User</th>
                 <th className="py-3 px-6">Tipe User</th>
                 <th className="py-3 px-6">Dibuat</th>
-                <th className="py-3 px-6">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -59,11 +58,6 @@ export default function Home({ users, members, produks, pemasukan_bulan_ini, tra
                     {user.created_at
                       ? new Date(user.created_at).toLocaleDateString('id-ID')
                       : '-'}
-                  </td>
-                  <td className="py-3 px-6">
-                    <span className={`bg-${user.status === 'active' ? 'green' : 'red'}-500 text-white text-xs font-semibold px-4 py-1 rounded-full shadow-sm`}>
-                        {user.status === 'active' ? 'Aktif' : 'Non-Aktif'}
-                    </span>
                   </td>
                 </tr>
               ))}

@@ -6,7 +6,6 @@ import Home from './view/home.js';
 import Produk from './view/produk.js';
 import type { PageProps } from '@/types/type';
 import User from './view/user';
-import UserLogs from './view/user-logs';
 import TransaksiAdminPage from './view/transaksi-admin.js';
 
 export default function Admin(){
@@ -69,12 +68,6 @@ export default function Admin(){
                             </svg>
                             Kelola User
                         </a>
-                        <a onClick={()=>{setPage("user-logs")}} className={`flex  ${page === "user-logs"  && "bg-gray-700 text-white scale-105" }  items-center gap-1 hover:scale-105 text-gray-300 hover:text-white hover:bg-gray-700 rounded px-3 py-2 transition-all duration-300 ease-in-out`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                                <path fillRule="evenodd" d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5zm2 2h10a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm5 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-3 4a1 1 0 1 1 2 0v2a1 1 0 1 1-2 0v-2zm4 0a1 1 0 1 1 2 0v2a1 1 0 1 1-2 0v-2z" clipRule="evenodd" />
-                            </svg>
-                            Log Aktivitas
-                        </a>
                     </nav>
                 </div>
             </div>
@@ -101,14 +94,12 @@ export default function Admin(){
                         
                         <div className="flex justify-end items-center">
                             <div className='relative'>
-                                <button 
-                                    onClick={funcShowLogOut}
-                                    className='flex items-center cursor-pointer gap-2 text-white hover:bg-gray-600 rounded px-3 py-2 transition-colors'
-                                >
-                                    <span className='text-sm md:text-base'>{localStorage.getItem("username")}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={`${showLogOut && 'rotate-180'} transition-all duration-300 ease-in-out size-4`}>
-                                        <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clipRule="evenodd" />
-                                    </svg>
+                                <button
+                                    className="bg-red-500 shadow-lg flex items-center text-white px-4 py-2 rounded hover:bg-red-500 transition hover:scale-105 cursor-pointer"
+                                    onClick={() => router.post('/logout')}
+                                    >
+                                    <LogOut className="h-5 w-5 mr-1" />
+                                    Logout
                                 </button>
                                 
                                 {showLogOut && (
@@ -130,12 +121,11 @@ export default function Admin(){
                 
                 {/* Main Content Area */}
                 <div className="flex-1 overflow-auto w-full h-screen p-6">
-                    <div className="bg-white border border-grey-200 rounded-lg shadow-xl  px-6 py-6">
+                    <div className="bg-white border border-gray-300 rounded-lg shadow-xl  px-6 py-6">
                         { page === "home" && <Home users={users} members={members} produks={produks} pemasukan_bulan_ini={pemasukan_bulan_ini} transaksi={transaksi} />}
                         { page === "transaksi" && <TransaksiAdminPage transaksi={transaksi} />}
                         { page === "produk" && <Produk produks={produks} />}
                         { page === "user" && <User users={users} />}
-                        { page === "user-logs" && <UserLogs />}
                     </div>
                 </div>
             </div>

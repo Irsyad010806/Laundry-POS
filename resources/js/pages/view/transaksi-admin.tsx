@@ -25,6 +25,7 @@ interface Member {
 interface Transaksi {
   id: number;
   kode_transaksi: string;
+  nama_penerima: string | null;
   member: Member | null;
   total: number;
   metode_pembayaran: string;
@@ -171,12 +172,12 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
             <tr>
               <th>No</th>
               <th>Kode Transaksi</th>
-              <th>Member</th>
+              <th>Produk</th>
+              <th>Nama Penerima</th>
               <th>Total</th>
               <th>Metode Pembayaran</th>
-              <th>Status</th>
               <th>Tanggal</th>
-              <th>Items</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -184,12 +185,11 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
               <tr>
                 <td>${index + 1}</td>
                 <td>${trx.kode_transaksi}</td>
-                <td>${trx.member?.nama || 'Guest'}</td>
+                <td>${trx.detail.map(d => d.produk.nama).join(', ')}</td>
+                <td>${trx.nama_penerima || (trx.member ? trx.member.nama : 'Umum')}</td>
                 <td class="total">${formatCurrency(trx.total)}</td>
                 <td>${trx.metode_pembayaran}</td>
-                <td class="status-${trx.status}">${trx.status}</td>
                 <td>${trx.created_at ? new Date(trx.created_at).toLocaleDateString('id-ID') : '-'}</td>
-                <td>${trx.detail.length}&nbsp;item(s)</td>
               </tr>
             `).join('')}
           </tbody>
@@ -199,9 +199,6 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
           <h3>Ringkasan</h3>
           <p><strong>Total Transaksi:</strong> ${dataToPrint.length}</p>
           <p><strong>Total Pendapatan:</strong> Rp ${dataToPrint.reduce((sum, trx) => Number(sum) + Number(trx.total), 0).toLocaleString('id-ID')}</p>
-          <p><strong>Transaksi Paid:</strong> ${dataToPrint.filter(trx => trx.status === 'paid').length}</p>
-          <p><strong>Transaksi Pending:</strong> ${dataToPrint.filter(trx => trx.status === 'pending').length}</p>
-          <p><strong>Transaksi Cancelled:</strong> ${dataToPrint.filter(trx => trx.status === 'cancelled').length}</p>
         </div>
         
         <script>
@@ -266,10 +263,10 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                 </svg>
                 <input
                   type="text"
-                  placeholder="Cari kode transaksi atau member..."
+                  placeholder="Cari kode transaksi"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black focus:border-transparent transition-all"
                 />
               </div>
 
@@ -278,28 +275,37 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                 onClick={() => setShowPrintModal(true)}
                 className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5 mr-2 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 9V2h12v7M6 18h12v4H6v-4zm12-9H6a2 2 0 00-2 2v5h16v-5a2 2 0 00-2-2z"
+                />
                 </svg>
                 Print
-              </button>
-              
+              </button>  
             </div>
             
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-black text-slate-700">Urutkan:</label>
-              <select
+              {/* <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
               >
                 <option value="created_at">Tanggal</option>
                 <option value="total">Total</option>
-                <option value="kode_transaksi">Kode</option>
-              </select>
+              </select> */}
               <button
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="p-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                className="p-2 text-black border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 {sortOrder === 'asc' ? '↑' : '↓'}
               </button>
@@ -323,7 +329,7 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                 </button>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-4 text-black">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Dari
@@ -380,6 +386,9 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                     Produk
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Nama Penerima
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Pembayaran
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -419,7 +428,7 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                           {trx.detail.slice(0, 3).map((d, idx) => (
                             <img
                               key={d.id}
-                              src={`/logo/${d.produk.gambar}`}
+                              src={`/images/${d.produk.gambar}`}
                               alt={d.produk.nama}
                               className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
                             />
@@ -436,6 +445,17 @@ const TransaksiPage: React.FC<TransaksiPageProps> = ({ transaksi }) => {
                           </div>
                           <div className="text-xs text-slate-500">
                             {trx.detail.reduce((sum, d) => sum + d.qty, 0)} qty total
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                        </div>
+                        <div className="ml-2">
+                          <div className="text-sm font-medium text-slate-900">
+                            {trx.nama_penerima || (trx.member ? trx.member.nama : 'Umum')}
                           </div>
                         </div>
                       </div>

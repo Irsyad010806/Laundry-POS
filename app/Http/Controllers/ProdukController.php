@@ -21,11 +21,11 @@ class ProdukController extends Controller
         $request->validate([
             'nama' => 'required|string',
             'harga' => 'required|numeric',
-            'stok' => 'required|numeric',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'kategori' => 'required|string',
         ]);
 
-        $data = $request->only(['nama', 'harga', 'stok']);
+        $data = $request->only(['nama', 'harga', 'kategori']);
         if ($request->hasFile('gambar')) {
             $gambar = $request->file('gambar');
             $filename = time() . '.' . $gambar->getClientOriginalExtension();
@@ -53,7 +53,7 @@ class ProdukController extends Controller
             $rules = [
                 'nama' => 'required|string',
                 'harga' => 'required|numeric',
-                'stok' => 'required|numeric',
+                'kategori' => 'required|string',
             ];
             if ($request->hasFile('gambar')) {
                 $rules['gambar'] = 'image|mimes:jpeg,png,jpg|max:2048';
@@ -66,14 +66,14 @@ class ProdukController extends Controller
             if ($request->hasFile('gambar')) {
                 $gambar = $request->file('gambar');
                 $filename = time() . '.' . $gambar->getClientOriginalExtension();
-                $gambar->move(public_path('logo'), $filename);
+                $gambar->move(public_path('images'), $filename);
                 $produk->gambar = $filename;
             }
 
             // Update data lainnya
             $produk->nama = $request->input('nama');
             $produk->harga = $request->input('harga');
-            $produk->stok = $request->input('stok');
+            $produk->kategori = $request->input('kategori');
             $produk->save();
 
             return redirect()->back()->with('message', 'Produk berhasil diperbarui.');

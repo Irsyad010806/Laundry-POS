@@ -30,7 +30,7 @@ class TransaksiController extends Controller
     {
         $request->validate([
             'nama_penerima' => 'required|string',
-            'no_wa' => 'nullable|integer',
+            'no_wa' => 'required|string|max:12',
             'alamat_pengiriman' => 'nullable|string',
             'biaya_pengiriman' => 'nullable|numeric',
             'total' => 'required|numeric',

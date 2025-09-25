@@ -171,7 +171,7 @@ export default function Dashboard({ produk }: DashboardProps) {
             <div className="flex justify-between items-center pt-4 px-4 bg-blue-400 py-4">
             <h1 className="text-2xl font-bold text-white">Laundry POS</h1>
             <button
-                className="bg-red-500 flex items-center text-white px-4 py-2 rounded hover:bg-red-500 transition hover:scale-105 cursor-pointer"
+                className="bg-red-500 shadow-lg flex items-center text-white px-4 py-2 rounded hover:bg-red-500 transition hover:scale-105 cursor-pointer"
                 onClick={() => router.post('/logout')}
             >
                 <LogOut className="h-5 w-5 mr-1" />
